@@ -31,6 +31,8 @@ var trees_x;
 var canyons;
 var collectables;
 
+var game_score;
+
 function setup()
 {
 	createCanvas(1024, 576);
@@ -113,6 +115,7 @@ function setup()
             isFound: false
         }
     ];
+    game_score = 0;
 }
 
 function draw()
@@ -211,30 +214,24 @@ function draw()
         endShape(CLOSE);
     }    
     
-    //Collectables
-        
-    for (var i = 0; i < collectables.length; i++) 
-    {
-        if (dist(gameChar_x,gameChar_y,collectables[i].x_pos,collectables[i].y_pos) < 60)
-        {
-            collectables[i].isFound = true;
+    //Game Score: Score is calculated by counting number of isFound properties in collectables array and then resetting it to zero before next frame
+    for (var i = 0; i < collectables.length; i++) {
+        if (collectables[i].isFound) {
+            game_score++;
         }
+    }
+    fill(27,26,101);
+    textSize(64);
+    text(game_score, 10, 60);
+    game_score = 0;
+    
+    //Collectables    
+    for (var i = 0; i < collectables.length; i++)
+    {
+        collectable_test(i);
         if (!collectables[i].isFound) 
         {
         //collectable
-            fill(220,220,0);
-            ellipse(collectables[i].x_pos-collectables[i].size*0.65,collectables[i].y_pos,collectables[i].size,collectables[i].size);
-            ellipse(collectables[i].x_pos+collectables[i].size*0.65,collectables[i].y_pos,collectables[i].size,collectables[i].size);
-            ellipse(collectables[i].x_pos,collectables[i].y_pos-collectables[i].size*0.65,collectables[i].size,collectables[i].size);
-            ellipse(collectables[i].x_pos,collectables[i].y_pos+collectables[i].size*0.65,collectables[i].size,collectables[i].size);
-            fill(0);
-            ellipse(collectables[i].x_pos,collectables[i].y_pos,collectables[i].size,collectables[i].size);
-        }
-        else
-        {
-            collectables[i].size = 20;
-            collectables[i].x_pos = 30 + i*50 ;
-            collectables[i].y_pos = 30;
             fill(220,220,0);
             ellipse(collectables[i].x_pos-collectables[i].size*0.65,collectables[i].y_pos,collectables[i].size,collectables[i].size);
             ellipse(collectables[i].x_pos+collectables[i].size*0.65,collectables[i].y_pos,collectables[i].size,collectables[i].size);
@@ -458,11 +455,17 @@ function draw()
         gameChar_y -= 3;
 		//jumping facing forwards
         fill(253,207,88);
-        ellipse(gameChar_x,gameChar_y,16,30);
+        ellipse(gameChar_x-18,gameChar_y+5,9,25);
         fill(242,145,32);
-        ellipse(gameChar_x,gameChar_y,10,24);
+        ellipse(gameChar_x-18,gameChar_y+5,5,19);
         fill(255,244,0);
-        ellipse(gameChar_x,gameChar_y,6,18);
+        ellipse(gameChar_x-18,gameChar_y+5,2,13);
+        fill(253,207,88);
+        ellipse(gameChar_x+18,gameChar_y+5,9,25);
+        fill(242,145,32);
+        ellipse(gameChar_x+18,gameChar_y+5,5,19);
+        fill(255,244,0);
+        ellipse(gameChar_x+18,gameChar_y+5,2,13);
         fill(27,26,101);
         beginShape();
         vertex(gameChar_x-18,gameChar_y-40);
@@ -588,5 +591,12 @@ function canyon_test(canyons) {
         {
             return true;
         }
+    }
+}
+//Collectable Test: Checks if character has collected a collectable
+function collectable_test(i) {
+    if (dist(gameChar_x,gameChar_y,collectables[i].x_pos,collectables[i].y_pos) < 60)
+    {
+        collectables[i].isFound = true;
     }
 }
