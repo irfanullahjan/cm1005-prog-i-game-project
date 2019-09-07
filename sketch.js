@@ -15,6 +15,15 @@ NOTES:
 4. I deliberately moved interactive objects (i.e. collectables and canyons) outside push() pop(). This was because translating these objects with the scenery only moved the objects visibly however their position property remaining static relative to the window. I fixed this by manually changing the position properties whenever the scenery moved.
 
 
+
+
+
+
+ADVANCED GRAPHICS:
+
+
+
+
 */
 var gameChar_x;
 var gameChar_y;
@@ -32,6 +41,10 @@ var canyons;
 var collectables;
 
 var game_score;
+var lives;
+var flagpole;
+
+var parallax;
 
 function setup()
 {
@@ -115,7 +128,17 @@ function setup()
             isFound: false
         }
     ];
+    parallax = {
+        clouds: 0.3,
+        mountains: 0.6,
+        trees: 0.8,
+    };
     game_score = 0;
+    lives = 3;
+    flagpole = {
+        isReached: false,
+        x_pos: 3000
+    };
 }
 
 function draw()
@@ -130,7 +153,7 @@ function draw()
 	rect(0, floorPos_y, width, height - floorPos_y); //draw some green ground
     
     push();
-    translate(scrollPos*0.4,0); //multiplying scrollPos by a factor to enable parallax effect
+    translate(scrollPos*parallax.clouds,0); //multiplying scrollPos by a factor to enable parallax effect
     //Draw clouds
     for (var i = 0; i < clouds.length; i++)
     {
@@ -149,7 +172,7 @@ function draw()
     pop();
     
     push();
-    translate(scrollPos*0.7,0);
+    translate(scrollPos*parallax.mountains,0);
     //Mountains
     for (var i = 0; i < mountains.length; i++)
     {
@@ -165,7 +188,7 @@ function draw()
     pop();
     
     push();
-    translate(scrollPos*0.9,0);
+    translate(scrollPos*parallax.trees,0);
     //Trees
     for (var i = 0; i < trees_x.length; i++)
     {
@@ -177,22 +200,9 @@ function draw()
         triangle(trees_x[i]-50,treePos_y-50,trees_x[i]+100,treePos_y-50,trees_x[i]+25,treePos_y-150);
     }
     pop();
-
-	///////////INTERACTION CODE//////////
-	//Put conditional statements to move the game character below here
-    if (isFlying > 0)
-    {
-        isFlying -= 1;
-    }
     
-    if (gameChar_y != floorPos_y && isFlying == 0)
-    {
-        gameChar_y += 1;
-    } else if   (canyon_test(canyons))
-    {
-        gameChar_y += 1;
-    }
-    
+    push();
+    translate(scrollPos,0);
 	//Canyons
     for (var i = 0; i < canyons.length; i++)
     {
@@ -212,19 +222,7 @@ function draw()
         vertex(canyons[i].x_pos+90,canyons[i].y_pos-50);
         vertex(canyons[i].x_pos+100,canyons[i].y_pos);
         endShape(CLOSE);
-    }    
-    
-    //Game Score: Score is calculated by counting number of isFound properties in collectables array and then resetting it to zero before next frame
-    for (var i = 0; i < collectables.length; i++) {
-        if (collectables[i].isFound) {
-            game_score++;
-        }
     }
-    fill(27,26,101);
-    textSize(64);
-    text(game_score, 10, 60);
-    game_score = 0;
-    
     //Collectables    
     for (var i = 0; i < collectables.length; i++)
     {
@@ -240,8 +238,61 @@ function draw()
             fill(0);
             ellipse(collectables[i].x_pos,collectables[i].y_pos,collectables[i].size,collectables[i].size);
         }
-    }    
+    }
+    //Flagpole
+    flagpole_render();
+    flagpole_test();
     
+    pop();
+    
+
+	///////////INTERACTION CODE//////////
+	//Put conditional statements to move the game character below here
+    if (isFlying > 0)
+    {
+        isFlying -= 1;
+    }
+    
+    if (gameChar_y != floorPos_y && isFlying == 0)
+    {
+        gameChar_y += 1;
+    } else if   (canyon_test(canyons))
+    {
+        gameChar_y += 1;
+    }
+    
+   
+    
+    //Game Score: Score is calculated by counting number of isFound properties in collectables array and then resetting it to zero before next frame
+    for (var i = 0; i < collectables.length; i++) {
+        if (collectables[i].isFound) {
+            game_score++;
+        }
+    }
+    fill(27,26,101);
+    textAlign(LEFT);
+    textSize(32);
+    text("Score: "+game_score, 10, 32);
+    game_score = 0;
+    
+    //Lives: Character dies once it hits the spikes in canyons. This reduces lives by 1 and resets character position to start.
+    fill(27,26,101);
+    textSize(32);
+    text("Lives: "+lives, 10, 64);
+    if (gameChar_y > 535 && lives > 1)
+    {
+        lives--;
+        scrollPos = 0;
+        gameChar_x = 50;
+	    gameChar_y = floorPos_y;
+    } else if (gameChar_y > 535 && lives == 1) {
+        lives--;
+    } else if (lives == 0) {
+        textAlign(CENTER);
+        fill(200,0,0);
+        textSize(96);
+        text('GAME OVER', width/2, height/2);
+    }
 
 	//Character
     
@@ -252,7 +303,7 @@ function draw()
         isRight = false;
     }
     
-    //varios character positions
+    //various character positions
 	if(isLeft && isFlying > 0)
 	{
         gameChar_y -= 3;
@@ -263,14 +314,6 @@ function draw()
 		else
 		{
 			scrollPos += 3;
-            for (var i = 0; i < collectables.length; i++)
-            {
-                collectables[i].x_pos += 3
-            }
-            for (var i = 0; i < canyons.length; i++)
-            {
-                canyons[i].x_pos += 3
-            }
 		}
 		//jumping-left
         fill(253,207,88);
@@ -316,14 +359,6 @@ function draw()
 		else
 		{
 			scrollPos -= 3; // negative for moving against the background
-            for (var i = 0; i < collectables.length; i++)
-            {
-                collectables[i].x_pos -= 3
-            }
-            for (var i = 0; i < canyons.length; i++)
-            {
-                canyons[i].x_pos -= 3
-            }
 		}
 		//jumping-right
         fill(253,207,88);
@@ -367,14 +402,6 @@ function draw()
 		else
 		{
 			scrollPos += 3;
-            for (var i = 0; i < collectables.length; i++)
-            {
-                collectables[i].x_pos += 3
-            }
-            for (var i = 0; i < canyons.length; i++)
-            {
-                canyons[i].x_pos += 3
-            }
 		}
 		//walking left
         fill(27,26,101);
@@ -413,14 +440,6 @@ function draw()
 		else
 		{
 			scrollPos -= 3; // negative for moving against the background
-            for (var i = 0; i < collectables.length; i++)
-            {
-                collectables[i].x_pos -= 3
-            }
-            for (var i = 0; i < canyons.length; i++)
-            {
-                canyons[i].x_pos -= 3
-            }
 		}
 		//walking right
         fill(27,26,101);
@@ -587,7 +606,7 @@ function keyReleased()
 function canyon_test(canyons) {
     for (var i = 0; i < canyons.length; i++)
     {
-        if (gameChar_x > canyons[i].x_pos && gameChar_x < canyons[i].x_pos + 100)
+        if (gameChar_x > canyons[i].x_pos + scrollPos && gameChar_x < canyons[i].x_pos + scrollPos + 100)
         {
             return true;
         }
@@ -595,8 +614,33 @@ function canyon_test(canyons) {
 }
 //Collectable Test: Checks if character has collected a collectable
 function collectable_test(i) {
-    if (dist(gameChar_x,gameChar_y,collectables[i].x_pos,collectables[i].y_pos) < 60)
+    if (dist(gameChar_x,gameChar_y,collectables[i].x_pos+scrollPos,collectables[i].y_pos) < 60)
     {
         collectables[i].isFound = true;
+    }
+}
+
+//Flagpole
+function flagpole_render() {
+    stroke(200);
+    strokeWeight(5);
+    line(flagpole.x_pos,floorPos_y,flagpole.x_pos,floorPos_y-200);
+    noStroke();
+    if (flagpole.isReached) {
+        fill(0,155,0);
+        rect(flagpole.x_pos,floorPos_y-160,50,-40);
+        textAlign(CENTER);
+        fill(0,155,0);
+        textSize(64);
+        text('LEVEL COMPLETE', flagpole.x_pos, height/2-100);
+    } else {
+        fill(255,255,0);
+        rect(flagpole.x_pos,floorPos_y,50,-40);
+    } 
+}
+function flagpole_test() {
+    if (gameChar_x + 50 > flagpole.x_pos + scrollPos)
+    {
+        flagpole.isReached = true;
     }
 }
