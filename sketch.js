@@ -178,110 +178,51 @@ function setup()
 }
 
 function draw()
-{
-
-	///////////DRAWING CODE//////////
-
-	background(10,20,60); //fill the sky blue
+{    
+    //Sky
+	background(10,20,60);
     
-    //Draw stars
+    //Stars
     for (var i = 0; i < stars.length; i++)
     {
         noStroke();
         fill(stars[i].intensity);
         ellipse(stars[i].x, stars[i].y, stars[i].size);
     }
-
+    
+    //Ground
 	noStroke();
 	fill(144,79,32);
-	rect(0, floorPos_y, width, height - floorPos_y); //draw some green ground
+	rect(0, floorPos_y, width, height - floorPos_y);
     
+    //Parallax Layer 1
     push();
     translate(scrollPos*parallax.clouds,0); //multiplying scrollPos by a factor to enable parallax effect
-    //Draw clouds
-    for (var i = 0; i < clouds.length; i++)
-    {
-        fill(150);
-        push();
-        scale(clouds[i].size);
-        beginShape();
-        rect(clouds[i].x_pos,clouds[i].y_pos,100,40);
-        ellipse(clouds[i].x_pos,clouds[i].y_pos+20,40,40);
-        ellipse(clouds[i].x_pos+100,clouds[i].y_pos+20,40,40);
-        ellipse(clouds[i].x_pos+30,clouds[i].y_pos,50,50);
-        ellipse(clouds[i].x_pos+70,clouds[i].y_pos,70,70);
-        endShape();
-        pop(); //push() and pop() keep scale() from affecting other shapes
-    }
+    draw_clouds();                          //draw clouds
     pop();
     
+    //Parallax Layer 2
     push();
     translate(scrollPos*parallax.mountains,0);
-    //Mountains
-    for (var i = 0; i < mountains.length; i++)
-    {
-        fill(30,30,50);
-        push();
-        scale(mountains[i].size);
-        beginShape();
-        triangle(mountains[i].x_pos,mountains[i].y_pos-232,mountains[i].x_pos-250,mountains[i].y_pos,mountains[i].x_pos+250,mountains[i].y_pos);
-        triangle(mountains[i].x_pos-150,mountains[i].y_pos-232,mountains[i].x_pos-400,mountains[i].y_pos,mountains[i].x_pos+200,mountains[i].y_pos);
-        endShape(CLOSE);
-        pop();
-    }
+    draw_mountains();                       //draw mountains
     pop();
     
+    //Parallac Layer 3
     push();
     translate(scrollPos*parallax.trees,0);
-    //Trees
-    for (var i = 0; i < trees_x.length; i++)
-    {
-        fill(60,35,25);
-        rect(trees_x[i],treePos_y,50,145);
-        fill(10,60,10);
-        triangle(trees_x[i]-50,treePos_y+50,trees_x[i]+100,treePos_y+50,trees_x[i]+25,treePos_y-50);
-        triangle(trees_x[i]-50,treePos_y,trees_x[i]+100,treePos_y,trees_x[i]+25,treePos_y-100);
-        triangle(trees_x[i]-50,treePos_y-50,trees_x[i]+100,treePos_y-50,trees_x[i]+25,treePos_y-150);
-    }
+    draw_trees();                           //draw trees
     pop();
     
+    //Parallax Layer 4
     push();
     translate(scrollPos,0);
-	//Canyons
-    for (var i = 0; i < canyons.length; i++)
-    {
-        fill(30,30,50);
-        rect(canyons[i].x_pos,floorPos_y,canyons[i].size*20,150);
-        fill(150,0,0);
-        beginShape(); //hazards in canyon
-        vertex(canyons[i].x_pos,height);
-        for (var j = 0; j < canyons[i].size; j++)
-        {
-            vertex(canyons[i].x_pos+(j+1)*20-10,height-50);
-            vertex(canyons[i].x_pos+(j+1)*20,height);
-        }
-        endShape(CLOSE);
-    }
+    draw_canyons();                         //draw canyons
     //Collectables
-    for (var i = 0; i < collectables.length; i++)
-    {
-        collectable_test(i);
-        if (!collectables[i].isFound) 
-        {
-        //collectable
-            fill(160,160,0);
-            ellipse(collectables[i].x_pos-collectables[i].size*0.65,collectables[i].y_pos,collectables[i].size,collectables[i].size);
-            ellipse(collectables[i].x_pos+collectables[i].size*0.65,collectables[i].y_pos,collectables[i].size,collectables[i].size);
-            ellipse(collectables[i].x_pos,collectables[i].y_pos-collectables[i].size*0.65,collectables[i].size,collectables[i].size);
-            ellipse(collectables[i].x_pos,collectables[i].y_pos+collectables[i].size*0.65,collectables[i].size,collectables[i].size);
-            fill(0);
-            ellipse(collectables[i].x_pos,collectables[i].y_pos,collectables[i].size,collectables[i].size);
-        }
-    }
+    draw_collectables();                    //draw collectables
+    collectable_test();
     //Flagpole
-    flagpole_render();
+    draw_flagpole();
     flagpole_test();
-    
     pop();
     
 
@@ -671,8 +612,95 @@ function keyReleased()
 
 /////OTHER FUNCTIONS/////
 
+//Draw clouds
+function draw_clouds()
+{
+    for (var i = 0; i < clouds.length; i++)
+    {
+        fill(150);
+        push(); //push() and pop() keep scale() from affecting other shapes
+        scale(clouds[i].size);
+        beginShape();
+        rect(clouds[i].x_pos,clouds[i].y_pos,100,40);
+        ellipse(clouds[i].x_pos,clouds[i].y_pos+20,40,40);
+        ellipse(clouds[i].x_pos+100,clouds[i].y_pos+20,40,40);
+        ellipse(clouds[i].x_pos+30,clouds[i].y_pos,50,50);
+        ellipse(clouds[i].x_pos+70,clouds[i].y_pos,70,70);
+        endShape();
+        pop();
+    }
+}
+
+//Draw mountains
+function draw_mountains()
+{
+    for (var i = 0; i < mountains.length; i++)
+    {
+        fill(30,30,50);
+        push(); //push() and pop() keep scale() from affecting other shapes
+        scale(mountains[i].size);
+        beginShape();
+        triangle(mountains[i].x_pos,mountains[i].y_pos-232,mountains[i].x_pos-250,mountains[i].y_pos,mountains[i].x_pos+250,mountains[i].y_pos);
+        triangle(mountains[i].x_pos-150,mountains[i].y_pos-232,mountains[i].x_pos-400,mountains[i].y_pos,mountains[i].x_pos+200,mountains[i].y_pos);
+        endShape(CLOSE);
+        pop();
+    }
+}
+
+//Draw trees
+function draw_trees()
+{
+    for (var i = 0; i < trees_x.length; i++)
+    {
+        fill(60,35,25);
+        rect(trees_x[i],treePos_y,50,145);
+        fill(10,60,10);
+        triangle(trees_x[i]-50,treePos_y+50,trees_x[i]+100,treePos_y+50,trees_x[i]+25,treePos_y-50);
+        triangle(trees_x[i]-50,treePos_y,trees_x[i]+100,treePos_y,trees_x[i]+25,treePos_y-100);
+        triangle(trees_x[i]-50,treePos_y-50,trees_x[i]+100,treePos_y-50,trees_x[i]+25,treePos_y-150);
+    }
+}
+
+//Draw canyons
+function draw_canyons()
+{
+    for (var i = 0; i < canyons.length; i++)
+    {
+        fill(30,30,50);
+        rect(canyons[i].x_pos,floorPos_y,canyons[i].size*20,150);
+        fill(150,0,0);
+        beginShape(); //hazards in canyon
+        vertex(canyons[i].x_pos,height);
+        for (var j = 0; j < canyons[i].size; j++)
+        {
+            vertex(canyons[i].x_pos+(j+1)*20-10,height-50);
+            vertex(canyons[i].x_pos+(j+1)*20,height);
+        }
+        endShape(CLOSE);
+    }
+}
+
+//Draw collectables
+function draw_collectables() {
+    for (var i = 0; i < collectables.length; i++)
+    {
+        if (!collectables[i].isFound) 
+        {
+        //collectable
+            fill(160,160,0);
+            ellipse(collectables[i].x_pos-collectables[i].size*0.65,collectables[i].y_pos,collectables[i].size,collectables[i].size);
+            ellipse(collectables[i].x_pos+collectables[i].size*0.65,collectables[i].y_pos,collectables[i].size,collectables[i].size);
+            ellipse(collectables[i].x_pos,collectables[i].y_pos-collectables[i].size*0.65,collectables[i].size,collectables[i].size);
+            ellipse(collectables[i].x_pos,collectables[i].y_pos+collectables[i].size*0.65,collectables[i].size,collectables[i].size);
+            fill(0);
+            ellipse(collectables[i].x_pos,collectables[i].y_pos,collectables[i].size,collectables[i].size);
+        }
+    }
+}
+
 //Canyon Test: Checks if character has entered a canyon
-function canyon_test(canyons) {
+function canyon_test(canyons)
+{
     for (var i = 0; i < canyons.length; i++)
     {
         if (gameChar_x > canyons[i].x_pos + scrollPos && gameChar_x < canyons[i].x_pos + scrollPos + canyons[i].size*20)
@@ -683,15 +711,19 @@ function canyon_test(canyons) {
 }
 
 //Collectable Test: Checks if character has collected a collectable
-function collectable_test(i) {
-    if (dist(gameChar_x,gameChar_y,collectables[i].x_pos+scrollPos,collectables[i].y_pos) < 60)
+function collectable_test()
+{
+    for (var i = 0; i < collectables.length; i++)
     {
-        collectables[i].isFound = true;
+        if (dist(gameChar_x,gameChar_y,collectables[i].x_pos+scrollPos,collectables[i].y_pos) < 60)
+        {
+            collectables[i].isFound = true;
+        }
     }
 }
 
-//Flagpole renderer
-function flagpole_render() {
+//Draw flagpole
+function draw_flagpole() {
     stroke(200);
     strokeWeight(5);
     line(flagpole.x_pos,floorPos_y,flagpole.x_pos,floorPos_y-200);
