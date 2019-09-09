@@ -9,11 +9,18 @@ Student Name: Irfanullah Jan
 
 EXTENSIONS:
 
-1. Advanced Graphics
-I added parallax effect by scaling the horizontal translation of different layers by different factors. This creates an illusion that items such as collectables, canyons and the character are close and trees are behind, mountains in distance and clouds farther away. I also added stars to the night sky which don't move at all when the character moves because they are farthest away. The stars are randomly generated and are pushed to an array in setup function. This ensures that the star map is generated only once, and they stay in their place for the whole level of the game. From the parallax feature I learnt to efficiently use objects to keep my code clean and by generating stars, I learnt how to use a constructor function to create hundreds of objects thus avoiding unnecessary code repetition.
+1. ADVANCED GRAPHICS
 
-2. Sounds
-I added sounds for different actions and events such as jumping, collecting an item, destruction of the robot. I wanted to load a background music track however, p5 would not preload a large file so I had to give up on that one. While jump and destruction sounds were quite easy to implement, I had a hard time perfecting the sound behavior of collecting an item. Since my collectable detection function is called within draw loop, a single sound file was played with each frame and produced weird echo. I came up with a workaround to isolate the specific frame in which collectable is collected and played the sound only once on that frame, thus fixing the issue. Instead of playing the sound in collectable_test function, I play the sound when score goes up thus simplifying the task. There is still a minor glitch in character moving sound and it stops playing when I press both left and right keys at the same time. From this exercise I learnt the basic idea of how sound works in a simple game and importance of sound effects in the immersion we experience in video games.
+I added parallax effect by scaling the horizontal translation of different layers by different factors. This creates an illusion that items such as collectables, canyons and the character are close and trees are behind, mountains in distance and clouds farther away. I also added stars to the night sky which don't move at all when the character moves because they are farthest away. The stars are randomly generated and are pushed to an array in setup function. This ensures that the star map is generated only once, and they stay in their place for the whole level of the game. Smaller stars may twinkle.
+
+WHAT I LEARNT: From the parallax feature I learnt to efficiently use objects to keep my code clean and by generating stars, I learnt how to use a constructor function to create hundreds of objects thus avoiding unnecessary code repetition.
+
+
+2. SOUNDS
+
+I added sounds for different actions and events such as jumping, collecting an item, destruction of the robot. I wanted to load a background music track however, p5 would not preload a large file so I had to give up on that one. While jump and destruction sounds were quite easy to implement, I had a hard time perfecting the sound behavior of collecting an item. Since my collectable detection function is called within draw loop, a single sound file was played with each frame and produced weird echo. I came up with a workaround to isolate the specific frame in which collectable is collected and played the sound only once on that frame, thus fixing the issue. Instead of playing the sound in collectable_test function, I play the sound when score goes up thus simplifying the task. There is still a minor glitch in character moving sound and it stops playing when I press both left and right keys at the same time.
+
+WHAT I LEARNT: From this exercise I learnt the basic idea of how sound works in a simple game and importance of sound effects in the immersion we experience in video games.
 
 
 OTHER NOTES:
@@ -23,6 +30,8 @@ OTHER NOTES:
 2.  Width of canyons has been set as object property and then taking that into account when testing if character is falling into the canyon (see the function at the bottom). This significantly reduces the chances of bugs if the project is to be developed into a real-world game.
 
 3.  The physics is far from realistic, but I preferred to keep the project simple.
+
+4. Sounds used in this game are free and did require CC attribution however since the game is not going to be distributed, I decided to not add the attribution in the game for now.
 
 */
 var gameChar_x;
@@ -72,6 +81,7 @@ function preload()
 
 function setup()
 {
+    textFont('Consolas');
 	createCanvas(1024, 576);
 	floorPos_y = height * 3/4;
     scrollPos = 0;
@@ -183,12 +193,7 @@ function draw()
 	background(10,20,60);
     
     //Stars
-    for (var i = 0; i < stars.length; i++)
-    {
-        noStroke();
-        fill(stars[i].intensity);
-        ellipse(stars[i].x, stars[i].y, stars[i].size);
-    }
+    draw_stars();
     
     //Ground
 	noStroke();
@@ -259,15 +264,16 @@ function draw()
         collectSound.play();
     }
     fill(255);
-    textAlign(LEFT);
+    textAlign(RIGHT);
     textSize(32);
-    text("Score: "+game_score, 10, 32);
+    text("Score: "+game_score, width-16, 32);
     
     
     //Lives: Character dies once it hits the spikes in canyons. This reduces lives by 1 and resets character position to start.
     fill(255);
+    textAlign(LEFT);
     textSize(32);
-    text("Lives: "+lives, 10, 64);
+    text("Lives: "+lives, 10, 32);
     if (gameChar_y > 535 && lives > 1)
     {
         lives--;
@@ -612,6 +618,16 @@ function keyReleased()
 
 /////OTHER FUNCTIONS/////
 
+//Draw stars
+function draw_stars() {
+    for (var i = 0; i < stars.length; i++)
+    {
+        noStroke();
+        fill(random(stars[i].twinkle,255));
+        ellipse(stars[i].x, stars[i].y, stars[i].size);
+    }
+}
+
 //Draw clouds
 function draw_clouds()
 {
@@ -767,5 +783,10 @@ function Star(x, y, size, intensity)
     this.x = x;
     this.y = y;
     this.size = size;
-    this.intensity = intensity;
+    this.twinkle = random(0,255);
+    if (size > 2.5)
+    {
+        this.twinkle = 255; //this disables twinkling of large stars
+    }
+    
 }
