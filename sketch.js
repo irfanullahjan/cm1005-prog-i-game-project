@@ -1,9 +1,6 @@
 /*
 
 Final Game Project - Introduction to Programming I
-
-Week 20
-
 Student Name: Irfanullah Jan
 
 
@@ -114,7 +111,8 @@ function setup()
     isRight = false;
     isFlying = 0;
     isPlummeting = false;
-    clouds = [
+    clouds =
+    [
         {
             x_pos: 300,
             y_pos:50,
@@ -126,7 +124,8 @@ function setup()
         }
         
     ];
-    mountains = [
+    mountains =
+    [
         {
             x_pos: 700,
             y_pos:432,
@@ -138,7 +137,8 @@ function setup()
         }
     ];
     trees_x = [400,700,1300,1900,2100,2600];
-    canyons = [
+    canyons =
+    [
         {
             x_pos: 180,
             size: 4
@@ -156,7 +156,8 @@ function setup()
             size: 6
         }
     ];
-    collectables = [
+    collectables =
+    [
         {
             x_pos: 250,
             y_pos: 380,
@@ -184,14 +185,16 @@ function setup()
             isFound: false
         }
     ];
-    parallax = {
-        clouds: 0.3,
+    parallax =
+    {
+        clouds: 0.2,
         mountains: 0.6,
         trees: 0.8,
     };
     game_score = 0;
     lives = 3;
-    flagpole = {
+    flagpole =
+    {
         isReached: false,
         x_pos: 3000
     };
@@ -263,26 +266,30 @@ function draw()
     if (gameChar_y != floorPos_y && isFlying == 0)
     {
         gameChar_y += 1;
-    } else if   (canyon_test(canyons))
+    }
+    else if (canyon_test(canyons))
     {
         gameChar_y += 1;
     }
     
     //Sound when character hits the ground
-    if (gameChar_y == floorPos_y - 1 && !canyon_test(canyons)) {
+    if (gameChar_y == floorPos_y - 1 && !canyon_test(canyons))
+    {
         thudSound.play();
     }
-   
     
     //Game Score: Score is calculated by counting number of isFound properties in collectables array and then resetting it to zero before next frame
     var old_score = game_score;
     game_score = 0;
-    for (var i = 0; i < collectables.length; i++) {
-        if (collectables[i].isFound) {
+    for (var i = 0; i < collectables.length; i++)
+    {
+        if (collectables[i].isFound)
+        {
             game_score++;
         }
     }
-    if (game_score > old_score) {
+    if (game_score > old_score)
+    {
         collectSound.play();
     }
     fill(255);
@@ -303,17 +310,22 @@ function draw()
         gameChar_x = 50;
 	    gameChar_y = floorPos_y;
         destructSound.play();
-    } else if (gameChar_y > 535 && lives == 1) {
+    }
+    else if (gameChar_y > 535 && lives == 1)
+    {
         lives--;
         destructSound.play();
-    } else if (lives == 0) {
+    }
+    else if (lives == 0)
+    {
         textAlign(CENTER);
         fill(200,0,0);
         textSize(96);
         text('GAME OVER', width/2, height/2);
         textSize(32);
         text('Press R to restart the game.', width/2, height/2+100);
-        if (rPressed) {
+        if (rPressed)
+        {
             gameReset();
             rPressed = false;
         }
@@ -328,7 +340,7 @@ function draw()
         isRight = false;
     }
     
-    //various character positions
+    //various character moves
 	if(isLeft && isFlying > 0)
 	{
         gameChar_y -= 3;
@@ -340,40 +352,7 @@ function draw()
 		{
 			scrollPos += 3;
 		}
-		//jumping-left
-        fill(253,207,88);
-        ellipse(gameChar_x,gameChar_y,16,30);
-        fill(242,145,32);
-        ellipse(gameChar_x,gameChar_y,10,24);
-        fill(255,244,0);
-        ellipse(gameChar_x,gameChar_y,6,18);
-        fill(90);
-        ellipse(gameChar_x,gameChar_y-46,30,30);
-        fill(20);
-        ellipse(gameChar_x-10,gameChar_y-50,3,4);
-        fill(180)
-        beginShape();
-        vertex(gameChar_x-15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-9);
-        vertex(gameChar_x+6,gameChar_y);
-        vertex(gameChar_x-6,gameChar_y);
-        vertex(gameChar_x-15,gameChar_y-9);
-        endShape(CLOSE);
-        fill(90);
-        beginShape();
-        vertex(gameChar_x-5,gameChar_y-40);
-        vertex(gameChar_x+5,gameChar_y-40);
-        vertex(gameChar_x+7,gameChar_y-37);
-        vertex(gameChar_x+7,gameChar_y-9);
-        vertex(gameChar_x+10,gameChar_y);
-        vertex(gameChar_x+10,gameChar_y+2);
-        vertex(gameChar_x-10,gameChar_y+2);
-        vertex(gameChar_x-10,gameChar_y);
-        vertex(gameChar_x-7,gameChar_y-9);
-        vertex(gameChar_x-7,gameChar_y-37);
-        endShape(CLOSE);
-
+        character_jumping_left();
 	}
 	else if(isRight && isFlying > 0)
 	{
@@ -386,39 +365,7 @@ function draw()
 		{
 			scrollPos -= 3; // negative for moving against the background
 		}
-		//jumping-right
-        fill(253,207,88);
-        ellipse(gameChar_x,gameChar_y,16,30);
-        fill(242,145,32);
-        ellipse(gameChar_x,gameChar_y,10,24);
-        fill(255,244,0);
-        ellipse(gameChar_x,gameChar_y,6,18);
-        fill(90);
-        ellipse(gameChar_x,gameChar_y-46,30,30);
-        fill(20);
-        ellipse(gameChar_x+10,gameChar_y-50,3,4);
-        fill(180)
-        beginShape();
-        vertex(gameChar_x-15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-9);
-        vertex(gameChar_x+6,gameChar_y);
-        vertex(gameChar_x-6,gameChar_y);
-        vertex(gameChar_x-15,gameChar_y-9);
-        endShape(CLOSE);
-        fill(90);
-        beginShape();
-        vertex(gameChar_x-5,gameChar_y-40);
-        vertex(gameChar_x+5,gameChar_y-40);
-        vertex(gameChar_x+7,gameChar_y-37);
-        vertex(gameChar_x+7,gameChar_y-9);
-        vertex(gameChar_x+10,gameChar_y);
-        vertex(gameChar_x+10,gameChar_y+2);
-        vertex(gameChar_x-10,gameChar_y+2);
-        vertex(gameChar_x-10,gameChar_y);
-        vertex(gameChar_x-7,gameChar_y-9);
-        vertex(gameChar_x-7,gameChar_y-37);
-        endShape(CLOSE);
+		character_jumping_right();
 	}
 	else if(isLeft)
 	{
@@ -430,34 +377,7 @@ function draw()
 		{
 			scrollPos += 3;
 		}
-		//walking left
-        fill(90);
-        ellipse(gameChar_x,gameChar_y-46,30,30);
-        fill(20);
-        ellipse(gameChar_x-10,gameChar_y-50,3,4);
-        fill(180)
-        beginShape();
-        vertex(gameChar_x-15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-9);
-        vertex(gameChar_x+6,gameChar_y);
-        vertex(gameChar_x-6,gameChar_y);
-        vertex(gameChar_x-15,gameChar_y-9);
-        endShape(CLOSE);
-        fill(90);
-        beginShape();
-        vertex(gameChar_x-5,gameChar_y-40);
-        vertex(gameChar_x+5,gameChar_y-40);
-        vertex(gameChar_x+7,gameChar_y-37);
-        vertex(gameChar_x+7,gameChar_y-9);
-        vertex(gameChar_x+10,gameChar_y);
-        vertex(gameChar_x+10,gameChar_y+2);
-        vertex(gameChar_x-10,gameChar_y+2);
-        vertex(gameChar_x-10,gameChar_y);
-        vertex(gameChar_x-7,gameChar_y-9);
-        vertex(gameChar_x-7,gameChar_y-37);
-        endShape(CLOSE);
-
+        character_face_left();
 	}
 	else if(isRight)
 	{
@@ -469,123 +389,17 @@ function draw()
 		{
 			scrollPos -= 3; // negative for moving against the background
 		}
-		//walking right
-        fill(90);
-        ellipse(gameChar_x,gameChar_y-46,30,30);
-        fill(20);
-        ellipse(gameChar_x+10,gameChar_y-50,3,4);
-        fill(180)
-        beginShape();
-        vertex(gameChar_x-15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-9);
-        vertex(gameChar_x+6,gameChar_y);
-        vertex(gameChar_x-6,gameChar_y);
-        vertex(gameChar_x-15,gameChar_y-9);
-        endShape(CLOSE);
-        fill(90);
-        beginShape();
-        vertex(gameChar_x-5,gameChar_y-40);
-        vertex(gameChar_x+5,gameChar_y-40);
-        vertex(gameChar_x+7,gameChar_y-37);
-        vertex(gameChar_x+7,gameChar_y-9);
-        vertex(gameChar_x+10,gameChar_y);
-        vertex(gameChar_x+10,gameChar_y+2);
-        vertex(gameChar_x-10,gameChar_y+2);
-        vertex(gameChar_x-10,gameChar_y);
-        vertex(gameChar_x-7,gameChar_y-9);
-        vertex(gameChar_x-7,gameChar_y-37);
-        endShape(CLOSE);
+		character_face_right();
 
 	}
 	else if(isFlying > 0)
 	{
         gameChar_y -= 3;
-		//jumping facing forwards
-        fill(253,207,88);
-        ellipse(gameChar_x-18,gameChar_y+5,9,25);
-        fill(242,145,32);
-        ellipse(gameChar_x-18,gameChar_y+5,5,19);
-        fill(255,244,0);
-        ellipse(gameChar_x-18,gameChar_y+5,2,13);
-        fill(253,207,88);
-        ellipse(gameChar_x+18,gameChar_y+5,9,25);
-        fill(242,145,32);
-        ellipse(gameChar_x+18,gameChar_y+5,5,19);
-        fill(255,244,0);
-        ellipse(gameChar_x+18,gameChar_y+5,2,13);
-        fill(90);
-        beginShape();
-        vertex(gameChar_x-18,gameChar_y-40);
-        vertex(gameChar_x+18,gameChar_y-40);
-        vertex(gameChar_x+21,gameChar_y-37);
-        vertex(gameChar_x+21,gameChar_y-9);
-        vertex(gameChar_x+24,gameChar_y);
-        vertex(gameChar_x+24,gameChar_y+2);
-        vertex(gameChar_x+12,gameChar_y+2);
-        vertex(gameChar_x+12,gameChar_y);
-        vertex(gameChar_x+16,gameChar_y-9);
-        vertex(gameChar_x+16,gameChar_y-30);
-        vertex(gameChar_x-16,gameChar_y-30);
-        vertex(gameChar_x-16,gameChar_y-9);
-        vertex(gameChar_x-12,gameChar_y);
-        vertex(gameChar_x-12,gameChar_y+2);
-        vertex(gameChar_x-24,gameChar_y+2);
-        vertex(gameChar_x-24,gameChar_y);
-        vertex(gameChar_x-21,gameChar_y-9);
-        vertex(gameChar_x-21,gameChar_y-37);
-        endShape(CLOSE);
-        ellipse(gameChar_x,gameChar_y-46,30,30);
-        fill(20);
-        ellipse(gameChar_x+5,gameChar_y-50,4,4);
-        ellipse(gameChar_x-5,gameChar_y-50,4,4);
-        fill(180)
-        beginShape();
-        vertex(gameChar_x-15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-9);
-        vertex(gameChar_x+6,gameChar_y);
-        vertex(gameChar_x-6,gameChar_y);
-        vertex(gameChar_x-15,gameChar_y-9);
-        endShape(CLOSE);
+        character_face_forward_jump();
 	}
 	else
 	{
-        // facing forwards
-	    fill(90);
-        beginShape();
-        vertex(gameChar_x-18,gameChar_y-40);
-        vertex(gameChar_x+18,gameChar_y-40);
-        vertex(gameChar_x+21,gameChar_y-37);
-        vertex(gameChar_x+21,gameChar_y-9);
-        vertex(gameChar_x+24,gameChar_y);
-        vertex(gameChar_x+24,gameChar_y+2);
-        vertex(gameChar_x+12,gameChar_y+2);
-        vertex(gameChar_x+12,gameChar_y);
-        vertex(gameChar_x+16,gameChar_y-9);
-        vertex(gameChar_x+16,gameChar_y-30);
-        vertex(gameChar_x-16,gameChar_y-30);
-        vertex(gameChar_x-16,gameChar_y-9);
-        vertex(gameChar_x-12,gameChar_y);
-        vertex(gameChar_x-12,gameChar_y+2);
-        vertex(gameChar_x-24,gameChar_y+2);
-        vertex(gameChar_x-24,gameChar_y);
-        vertex(gameChar_x-21,gameChar_y-9);
-        vertex(gameChar_x-21,gameChar_y-37);
-        endShape(CLOSE);
-        ellipse(gameChar_x,gameChar_y-46,30,30);
-        fill(20);
-        ellipse(gameChar_x+5,gameChar_y-50,4,4);
-        ellipse(gameChar_x-5,gameChar_y-50,4,4);
-        fill(180)
-        beginShape();
-        vertex(gameChar_x-15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-46);
-        vertex(gameChar_x+15,gameChar_y-9);
-        vertex(gameChar_x+6,gameChar_y);
-        vertex(gameChar_x-6,gameChar_y);
-        vertex(gameChar_x-15,gameChar_y-9);
-        endShape(CLOSE);
+        character_face_forward();
 	}
 
 }
@@ -647,7 +461,8 @@ function draw_sky()
     var color1 = [25,50,150]; 
     var color2 = [5,10,30];
     //horizontal lines to generate gradient for sky
-    for (var i = 0; i < height; i++) {
+    for (var i = 0; i < height; i++)
+    {
         var weight1 = i;
         var weight2 = height - i;
         var total = weight1 + weight2;
@@ -662,7 +477,8 @@ function draw_sky()
 }
 
 //Draw stars
-function draw_stars() {
+function draw_stars()
+{
     for (var i = 0; i < stars.length; i++)
     {
         noStroke();
@@ -740,7 +556,8 @@ function draw_canyons()
 }
 
 //Draw collectables
-function draw_collectables() {
+function draw_collectables()
+{
     for (var i = 0; i < collectables.length; i++)
     {
         if (!collectables[i].isFound) 
@@ -782,7 +599,8 @@ function collectable_test()
 }
 
 //Draw flagpole
-function draw_flagpole() {
+function draw_flagpole()
+{
     stroke(200);
     strokeWeight(5);
     line(flagpole.x_pos,floorPos_y,flagpole.x_pos,floorPos_y-200);
@@ -801,7 +619,8 @@ function draw_flagpole() {
 }
 
 //Raises flag on completion of level
-function flagpole_test() {
+function flagpole_test()
+{
     if (gameChar_x + 50 > flagpole.x_pos + scrollPos)
     {
         flagpole.isReached = true;
@@ -809,8 +628,10 @@ function flagpole_test() {
 }
 
 //Resets game: resets lives, character position and puts all collectables back on map.
-function gameReset() {
-    for (var i = 0; i < collectables.length; i++) {
+function gameReset()
+{
+    for (var i = 0; i < collectables.length; i++)
+    {
         collectables[i].isFound = false;
     }
     lives = 3;
@@ -832,4 +653,136 @@ function Star(x, y, size)
         this.twinkle = 255; //this disables twinkling of large stars
     }
     
+}
+
+//CHARACTER MODELS
+
+//character main shell (inner body). this is used in functions below to reduce code repetition.
+function character_shell()
+{
+    fill(180)
+    beginShape();
+    vertex(gameChar_x-15,gameChar_y-46);
+    vertex(gameChar_x+15,gameChar_y-46);
+    vertex(gameChar_x+15,gameChar_y-9);
+    vertex(gameChar_x+6,gameChar_y);
+    vertex(gameChar_x-6,gameChar_y);
+    vertex(gameChar_x-15,gameChar_y-9);
+    endShape(CLOSE);
+}
+
+//face forward
+function character_face_forward()
+{
+    fill(90);
+    beginShape();
+    vertex(gameChar_x-18,gameChar_y-40);
+    vertex(gameChar_x+18,gameChar_y-40);
+    vertex(gameChar_x+21,gameChar_y-37);
+    vertex(gameChar_x+21,gameChar_y-9);
+    vertex(gameChar_x+24,gameChar_y);
+    vertex(gameChar_x+24,gameChar_y+2);
+    vertex(gameChar_x+12,gameChar_y+2);
+    vertex(gameChar_x+12,gameChar_y);
+    vertex(gameChar_x+16,gameChar_y-9);
+    vertex(gameChar_x+16,gameChar_y-30);
+    vertex(gameChar_x-16,gameChar_y-30);
+    vertex(gameChar_x-16,gameChar_y-9);
+    vertex(gameChar_x-12,gameChar_y);
+    vertex(gameChar_x-12,gameChar_y+2);
+    vertex(gameChar_x-24,gameChar_y+2);
+    vertex(gameChar_x-24,gameChar_y);
+    vertex(gameChar_x-21,gameChar_y-9);
+    vertex(gameChar_x-21,gameChar_y-37);
+    endShape(CLOSE);
+    ellipse(gameChar_x,gameChar_y-46,30,30);
+    fill(20);
+    ellipse(gameChar_x+5,gameChar_y-50,4,4);
+    ellipse(gameChar_x-5,gameChar_y-50,4,4);
+    character_shell();
+}
+
+//jumping with face forward
+function character_face_forward_jump()
+{
+    //boosters flames front view
+    fill(253,207,88);
+    ellipse(gameChar_x-18,gameChar_y+5,9,25);
+    fill(242,145,32);
+    ellipse(gameChar_x-18,gameChar_y+5,5,19);
+    fill(255,244,0);
+    ellipse(gameChar_x-18,gameChar_y+5,2,13);
+    fill(253,207,88);
+    ellipse(gameChar_x+18,gameChar_y+5,9,25);
+    fill(242,145,32);
+    ellipse(gameChar_x+18,gameChar_y+5,5,19);
+    fill(255,244,0);
+    ellipse(gameChar_x+18,gameChar_y+5,2,13);
+    character_face_forward();
+}
+
+//side view without eyes. this is used within functions below to reduce code repetition.
+function character_side_view()
+{
+    character_shell();
+    fill(90);
+    beginShape();
+    vertex(gameChar_x-5,gameChar_y-40);
+    vertex(gameChar_x+5,gameChar_y-40);
+    vertex(gameChar_x+7,gameChar_y-37);
+    vertex(gameChar_x+7,gameChar_y-9);
+    vertex(gameChar_x+10,gameChar_y);
+    vertex(gameChar_x+10,gameChar_y+2);
+    vertex(gameChar_x-10,gameChar_y+2);
+    vertex(gameChar_x-10,gameChar_y);
+    vertex(gameChar_x-7,gameChar_y-9);
+    vertex(gameChar_x-7,gameChar_y-37);
+    endShape(CLOSE);
+}
+
+//face right
+function character_face_right()
+{
+    //side view of eye facing right
+    fill(90);
+    ellipse(gameChar_x,gameChar_y-46,30,30);
+    fill(20);
+    ellipse(gameChar_x+10,gameChar_y-50,3,4);
+    character_side_view();
+}
+
+//face left
+function character_face_left()
+{
+    //side view of eye facing left
+    fill(90);
+    ellipse(gameChar_x,gameChar_y-46,30,30);
+    fill(20);
+    ellipse(gameChar_x-10,gameChar_y-50,3,4);
+    character_side_view();
+}
+
+//this function is used in left and right jump view below
+function character_rocket_flame_sideview()
+{
+    fill(253,207,88);
+    ellipse(gameChar_x,gameChar_y,16,30);
+    fill(242,145,32);
+    ellipse(gameChar_x,gameChar_y,10,24);
+    fill(255,244,0);
+    ellipse(gameChar_x,gameChar_y,6,18);
+}
+
+function character_jumping_right()
+{
+    //jumping-right
+    character_rocket_flame_sideview();
+    character_face_right();
+}
+
+function character_jumping_left()
+{
+    //jumping-left
+    character_rocket_flame_sideview();
+    character_face_left();
 }
