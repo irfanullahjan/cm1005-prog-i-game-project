@@ -16,8 +16,9 @@ This creates an illusion that items such as collectables, canyons and the charac
 are behind, mountains in distance and clouds farther away. I also added stars to the night sky which
 don't move at all when the character moves because they are farthest away. The stars are randomly
 generated and are pushed to an array in setup function. This ensures that the star map is generated
-only once, and they stay in their place for the whole level of the game. I found it hard to make the
-twinkling of the stars realistic and to clean up my code into different layers. 
+only once, and they stay in their place for the whole level of the game. Also dded gradient for sky.
+I found it hard to make the twinkling of the stars realistic and to clean up my code into different
+layers. 
 
 WHAT I LEARNT: From the parallax feature I learnt to efficiently use objects to keep my code clean and
 by generating stars, I learnt how to use a constructor function to create hundreds of objects thus
@@ -211,8 +212,8 @@ function setup()
 function draw()
 {    
     //Sky
-	background(10,20,60);
-    
+    draw_sky();
+
     //Stars
     draw_stars();
     
@@ -639,6 +640,27 @@ function keyReleased()
 
 /////OTHER FUNCTIONS/////
 
+//Draw sky
+function draw_sky()
+{
+    //colors for linear gradient
+    var color1 = [25,50,150]; 
+    var color2 = [5,10,30];
+    //horizontal lines to generate gradient for sky
+    for (var i = 0; i < height; i++) {
+        var weight1 = i;
+        var weight2 = height - i;
+        var total = weight1 + weight2;
+        var r = color1[0]*weight1/total + color2[0]*weight2/total;
+        var g = color1[1]*weight1/total + color2[1]*weight2/total;
+        var b = color1[2]*weight1/total + color2[2]*weight2/total;
+        stroke(r,g,b);
+        noFill();
+        strokeWeight(1);
+        line(0,i,width,i);
+    }
+}
+
 //Draw stars
 function draw_stars() {
     for (var i = 0; i < stars.length; i++)
@@ -703,7 +725,7 @@ function draw_canyons()
 {
     for (var i = 0; i < canyons.length; i++)
     {
-        fill(30,30,50);
+        fill(10,25,50);
         rect(canyons[i].x_pos,floorPos_y,canyons[i].size*20,150);
         fill(150,0,0);
         beginShape(); //hazards in canyon
@@ -799,7 +821,7 @@ function gameReset() {
 }
 
 //Stars constructur
-function Star(x, y, size, intensity)
+function Star(x, y, size)
 {
     this.x = x;
     this.y = y;
