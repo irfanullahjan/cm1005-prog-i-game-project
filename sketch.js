@@ -13,7 +13,7 @@ This creates an illusion that items such as collectables, canyons and the charac
 are behind, mountains in distance and clouds farther away. I also added stars to the night sky which
 don't move at all when the character moves because they are farthest away. The stars are randomly
 generated and are pushed to an array in setup function. This ensures that the star map is generated
-only once, and they stay in their place for the whole level of the game. Also dded gradient for sky.
+only once, and they stay in their place for the whole level of the game. Also added gradient for sky.
 I found it hard to make the twinkling of the stars realistic and to clean up my code into different
 layers. 
 
